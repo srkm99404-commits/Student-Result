@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Result Dashboard</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: lightblue;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: white;
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        input {
+            padding: 10px;
+            margin: 10px;
+            width: 70%;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: green;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid black;
+            padding: 10px;
+        }
+
+        th {
+            background-color: lightgreen;
+        }
+
+        #message {
+            color: red;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h2>Student Result Dashboard</h2>
+
+    <input type="text" id="search"
+           placeholder="Search student by name or roll number">
+
+    <button onclick="searchStudent()">Search</button>
+    <button onclick="displayStudents()">Show All</button>
+
+    <p id="message"></p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Roll No</th>
+                <th>Name</th>
+                <th>Total Marks</th>
+                <th>Average</th>
+                <th>Grade</th>
+            </tr>
+        </thead>
+
+        <tbody id="studentData"></tbody>
+    </table>
+
+</div>
+
+<script>
+    
+    let students = [
+        {
+            rollNo: "101",
+            name: "Siddharth",
+            marks: [85, 90, 78, 88, 92]
+        },
+        {
+            rollNo: "102",
+            name: "Mathan",
+            marks: [75, 80, 70, 85, 90]
+        },
+        {
+            rollNo: "103",
+            name: "Kali",
+            marks: [60, 65, 70, 68, 72]
+        },
+        {
+            rollNo: "104",
+            name: "priya",
+            marks: [95, 92, 98, 90, 96]
+        }
+    ];
+
+    
+    function getResult(student) {
+        let total = student.marks.reduce(
+            (sum, mark) => sum + mark, 0
+        );
+
+        let average = total / student.marks.length;
+        let grade;
+
+        if (average >= 90) {
+            grade = "A+";
+        } else if (average >= 80) {
+            grade = "A";
+        } else if (average >= 70) {
+            grade = "B";
+        } else if (average >= 60) {
+            grade = "C";
+        } else if (average >= 50) {
+            grade = "D";
+        } else {
+            grade = "F";
+        }
+
+        return { total, average, grade };
+    }
+
+   
+    function displayStudents(list = students) {
+        let output = "";
+
+        list.forEach(function(student) {
+            let result = getResult(student);
+
+            output += `
+                <tr>
+                    <td>${student.rollNo}</td>
+                    <td>${student.name}</td>
+                    <td>${result.total} / 500</td>
+                    <td>${result.average.toFixed(2)}</td>
+                    <td>${result.grade}</td>
+                </tr>
+            `;
+        });
+
+        document.getElementById("studentData").innerHTML = output;
+
+        document.getElementById("message").textContent =
+            list.length === 0 ? "No student found!" : "";
+    }
+
+    
+    function searchStudent() {
+        let searchValue = document.getElementById("search")
+            .value.trim().toLowerCase();
+
+        if (searchValue === "") {
+            document.getElementById("message").textContent =
+                "Please enter a name or roll number!";
+            return;
+        }
+
+        let filteredStudents = students.filter(function(student) {
+            return student.name.toLowerCase().includes(searchValue) ||
+                   student.rollNo.toLowerCase().includes(searchValue);
+        });
+
+        displayStudents(filteredStudents);
+    }
+
+    
+    displayStudents();
+</script>
+
+</body>
+</html>
